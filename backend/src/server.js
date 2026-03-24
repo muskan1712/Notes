@@ -1,61 +1,119 @@
+// import express from "express";
+// import notesRoutes from "./routes/notesRoutes.js";
+// import { connectDB } from "./config/db.js";
+// import dotenv from "dotenv";
+// import rateLimiter from "./middleware/rateLimiter.js";
+// import cors from "cors" ;
+// import path from "path" ;
+ 
+// dotenv.config() ;
+
+// // console.log(process.env.MONGO_URI) ;
+
+// const app = express();
+// const PORT = process.env.PORT || 5001 ;
+// const __dirname = path.resolve()
+
+// // connectDB();
+// //middleware
+// if(process.env.NODE_ENV !== "production")
+// {
+//     app.use(cors({
+//           origin:"http://localhost:5173",
+//     })); 
+// }
+
+// app.use(express.json());
+// app.use(rateLimiter);
+// //this middleware will parse the json bodies : req.body
+// //our simple custom middleware
+// app.use((req , res, next) => {
+//   console.log(`Request method is ${req.method} & Req URL is ${req.url}`);
+//   next();
+// })
+
+// app.use("/api/notes", notesRoutes);
+
+// //middleware
+// // app.use(express.static(path.join(__dirname, "../frontend/dist")));
+
+// // app.get("*", (req ,res) => {
+// //    res.sendFile(path.join(__dirname, "../frontend", "dist" ,"index.html" ))
+// // })
+
+// if(process.env.NODE_ENV === "production")
+// {
+//     app.use(express.static(path.join(__dirname, "../frontend/dist")));
+
+//     app.get("*", (req ,res) => {
+//       res.sendFile(path.join(__dirname, "../frontend", "dist" ,"index.html" ))
+//     });
+// }
+
+// connectDB().then(() => {
+//   app.listen(PORT, () => {
+//       console.log("Server started on PORT:", PORT);
+//   });
+// })
+
+// const path = require("path");
+
+// // Serve frontend build
+// app.use(express.static(path.join(__dirname, "../frontend/build")));
+
+// app.get("*", (req, res) => {
+//   res.sendFile(path.resolve(__dirname, "../frontend/build/index.html"));
+// });
+
+
+
 import express from "express";
 import notesRoutes from "./routes/notesRoutes.js";
 import { connectDB } from "./config/db.js";
 import dotenv from "dotenv";
 import rateLimiter from "./middleware/rateLimiter.js";
-import cors from "cors" ;
-import path from "path" ;
- 
-dotenv.config() ;
+import cors from "cors";
+import path from "path";
 
-// console.log(process.env.MONGO_URI) ;
+dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 5001 ;
-const __dirname = path.resolve()
+const PORT = process.env.PORT || 5001;
+const __dirname = path.resolve();
 
-// connectDB();
-//middleware
-if(process.env.NODE_ENV !== "production")
-{
-    app.use(cors({
-          origin:"http://localhost:5173",
-    })); 
+// middleware
+if (process.env.NODE_ENV !== "production") {
+  app.use(
+    cors({
+      origin: "http://localhost:5173",
+    })
+  );
 }
 
 app.use(express.json());
 app.use(rateLimiter);
-//this middleware will parse the json bodies : req.body
-//our simple custom middleware
-app.use((req , res, next) => {
+
+app.use((req, res, next) => {
   console.log(`Request method is ${req.method} & Req URL is ${req.url}`);
   next();
-})
+});
 
 app.use("/api/notes", notesRoutes);
 
-//middleware
-// app.use(express.static(path.join(__dirname, "../frontend/dist")));
+// ✅ Serve frontend (Vite build → dist)
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static(path.join(__dirname, "../frontend/dist")));
 
-// app.get("*", (req ,res) => {
-//    res.sendFile(path.join(__dirname, "../frontend", "dist" ,"index.html" ))
-// })
-
-if(process.env.NODE_ENV === "production")
-{
-    app.use(express.static(path.join(__dirname, "../frontend/dist")));
-
-    app.get("*", (req ,res) => {
-      res.sendFile(path.join(__dirname, "../frontend", "dist" ,"index.html" ))
-    });
+  app.get("*", (req, res) => {
+    res.sendFile(
+      path.join(__dirname, "../frontend", "dist", "index.html")
+    );
+  });
 }
 
+// start server
 connectDB().then(() => {
   app.listen(PORT, () => {
-      console.log("Server started on PORT:", PORT);
+    console.log("Server started on PORT:", PORT);
   });
-})
-
-
-
-
+});
